@@ -50,9 +50,15 @@ diff (double a, double b, double p[], int nn, int M, int T, double eps)
         for (int i = 1; i <= M - 2; i++)
         {
             p[i] = X[i - 1];
+
             if (fabs (p[ i] - p[(1) * M + i]) < eps){L++;}
 
         }
+        for (int i =0; i <= M - 3; i++)
+        {
+            printf("%.8f   ", X[i]);
+        }
+
         p[0] = (-p[1]/h+(h*p[(1)*M])/(2*a*t)+(h)/(2*a)-1)/((-1/h-(h)/(2*a*t))) ;
         p[M - 1] =(p[M - 2]/h+(h*p[(1)*M+M-1])/(2*a*t)-(h)/(2*a))/(1/h+(h)/(2*a*t)+h/(2*a));
         for (int i = 0; i <= M - 1; i++){
@@ -60,7 +66,8 @@ diff (double a, double b, double p[], int nn, int M, int T, double eps)
             // printf("%.8f   ", p[i+M]);
             p[i+M]=p[i];
         }
-        //printf("\n");
+        printf("\n");
+
 
     }
 
@@ -87,8 +94,8 @@ int main ()
     int nn=10,M=10,T=1;
     double  b = 0.1, a = 0.01, eps=0.00000001;
     for(int j=0; j<1;j++){
-        M = 5*(j+1);
-        nn=8;
+        M = 100*(j+1);
+        nn=10;
         double *p;
         p = (double *)malloc((2*M)* sizeof (double));
         for(int i=0;i<2*M;i++){p[i]=100;}
@@ -229,14 +236,14 @@ void RESHI(double *a, double *x, double *b,int N)
     y[0]=a[0];
     s[0]=-a[1]/y[0];
     p[0]=b[0]/y[0];
-    for(int i=1;i<N;i++)
+    for(int i=1;i<N-1;i++)
     {
         y[i]=a[3*i]+a[3*i+2]*s[i-1];
-        s[i]=-a[3*i+2]/y[i];
+        s[i]=-a[3*i+1]/y[i];
         p[i]=(b[i]-a[3*i+2]*p[i-1])/y[i];
     }
-    y[N-1]=a[N*3]+a[N*3+2]*s[N-2];
-    p[N-1]=(b[N-1]-a[N*3+2]*p[N-2])/y[N-1];
+    y[N-1]=a[(N-1)*3]+a[(N-1)*3+2]*s[N-2];
+    p[N-1]=(b[N-1]-a[(N-1)*3+2]*p[N-2])/y[N-1];
     x[N-1]=p[N-1];
     for(int i=N-2;i>=0;i--)
     {
@@ -268,24 +275,25 @@ void makeAandB (double *p, double *A, double *B, double t, double h, double a,
         A[3*i+2]=-a/(2*h*h);
         B[i]=0;
     }
-    for (int i = 0; i <= (M - 2) * 3 - 1; i++)
+/*for (int i = 0; i <= (M - 2) * 3 - 1; i++)
     {
-        if (i % (M - 2) == 0)
-        {
-            printf ("\n");
-        }
-        if (i % 3 == 0)
-        {
-            printf ("%.8f   ", B[8]);
-            q1 = q1 + 1;
-        }
-        printf ("%.8f   ", A[i]);
-    }
+if (i % (M - 2) == 0)
+	{
+	  printf ("\n");
+	}
+	if (i % 3 == 0)
+	{
+	  printf ("%.8f   ", B[8]);
+	  q1 = q1 + 1;
+	}
+printf ("%.8f   ", A[i]);
+}
 //printf ("\n");
 //printf ("\n");
-//printf ("\n");
+//printf ("\n");*/
     return;
 }
+
 
 
 void makeDx(double *Dx, double *p, double h,int nn, int M)
