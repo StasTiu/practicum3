@@ -1,10 +1,6 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-int glavny(int i, double *a, int N);
-void swapstolb(int n, int m, double *a,  int N,int *c);
-void kdiagonali( double *a,double *b,  int N, int *c);
-void reshi(double *a, double *x, double *b,int N,int *c);
 void RESHI(double *a, double *x, double *b,int N);
 int Max(double *p,int nn, int M);
 int Min(double *p,int w,int nn, int M);
@@ -57,7 +53,7 @@ double diff(double a, double b, double p[],int nn, int M, int T, double eps,doub
         p[j*M+M-1] = 1;
         if(L==M-2){s=(nn-j)*t;num=j;j=-1;}
         makeDx(Dx,p,h,nn,M);
-        makeDt(Dt,p,t,nn,M);
+//        makeDt(Dt,p,t,nn,M);
     }
     /*for(int i=0; i<=nn*M-1; i++)
     {
@@ -196,85 +192,17 @@ int Min(double *p,int w,int nn, int M)
     }
     return k;
 }
-int glavny(int i, double *a, int N)
-{
-    int j,k;
-    double b;
-    k=i*N;
-    b=fabs(a[i*N]);
-    for(j=i*N;j<(i+1)*N;j++){if(fabs(a[j])>b){b=fabs(a[j]);k=j;}}
-    k=k-i*N;
-    return k;
-}
-void swapstolb(int n, int m, double *a,  int N,int *c)
-{
-    int i,k;
-    double b;
 
-    k=c[n];
-    c[n]=c[m];
-    c[m]=k;
-    for(i=0;i<N;i++)
-    {
-        b=a[i*N+n];
-        a[i*N+n]=a[i*N+m];
-        a[i*N+m]=b;
-    }
-    return;
-}
-void kdiagonali( double *a,double *b,  int N, int *c)
-{
-    int k,i,j,p;
-    double s,f;
-    for(i=0;i<N-1;i++)
-    {
-        k=glavny(i,a,N);
-        // if(fabs(a[i*N+k])>=0 && fabs(a[i*N+k])<=0){printf("vyrozdena %d\n",i);}
-        s=a[i*N+k];
-        if(fabs(s)<=1e-16){return;}
-        else{
-            swapstolb(i,k,a,N,c);
-            for(j=i*N;j<(i+1)*N;j++){a[j]=a[j]/s;}
-            b[i]=b[i]/s;
-            for(j=i+1;j<N;j++)
-            {
-                f=a[j*N+i];
-                for(p=j*N+i;p<(j+1)*N;p++)
-                {
-                    a[p]=a[p]-f*a[p-j*N+i*N];
-                }
-                b[j]=b[j]-f*b[i];
-            }
-        }
-
-    }
-    b[N-1]=b[N-1]/a[(N-1)*N+N-1];
-    a[(N-1)*N+N-1]=1;
-    return;
-}
-void reshi(double *a, double *x, double *b,int N,int *c)
-{
-    int i,j;
-    kdiagonali(a,b,N,c);
-    x[N-1]=b[N-1];
-    for(i=N-2;i>=0;i--)
-    {
-        x[i]=b[i];
-        for(j=N-1;j>i;j--)
-        {
-            x[i]=x[i]-x[j]*a[i*N+j];
-        }
-    }
-    return;
-}
 void RESHI(double *a, double *x, double *b,int N)
 {
-    int i;
-    double s[N],p[N],y[N];
+    double *s = new double[N];
+    double *p = new double[N];
+    double *y = new double[N];
+
     y[0]=a[0];
     s[0]=-a[1]/y[0];
     p[0]=b[0]/y[0];
-    for(i=1;i<N;i++)
+    for(int i=1;i<N;i++)
     {
         y[i]=a[N*i+i]+a[N*i+i-1]*s[i-1];
         s[i]=-a[N*i+i+1]/y[i];
@@ -283,7 +211,7 @@ void RESHI(double *a, double *x, double *b,int N)
     y[N-1]=a[N*N-1]+a[N*N-2]*s[N-2];
     p[N-1]=(b[N-1]-a[N*N-2]*p[N-2])/y[N-1];
     x[N-1]=p[N-1];
-    for(i=N-2;i>=0;i--)
+    for(int i=N-2;i>=0;i--)
     {
         x[i]=s[i]*x[i+1]+p[i];
     }
@@ -339,21 +267,6 @@ void PRINT(double *p,double t,double h, double s,int x, int y,int z,int c,int u,
 {
     printf("\n");
     printf("\n");
-//    printf ( "s  MIN MAX  %.8f, %d ,%d ", s,x,y ) ;
-//    printf("\n");
-//    printf("\n");
-//    printf ( "minDx maxDx  %d ,%d ", z,c ) ;
-//    printf("\n");
-//    printf("\n");
-//    printf ( "minDt maxDt  %d ,%d ", u,g ) ;
-//    printf("\n");
-//    printf("\n");
-//    printf("MIN str :: stol, znach, t :: x || %d :: %d, %.8f, %.5f :: %.5f   \n",x/M,x%M,p[x],T-t*(x/M),h*(x%M));
-//    printf("MAX str :: stol, znach, t :: x || %d :: %d, %.8f, %.5f :: %.5f   \n",y/M,y%M,p[y],T-t*(y/M),h*(y%M));
-//    printf("minDx str :: stol, znach, t :: x || %d :: %d, %.8f, %.5f :: %.5f  \n",z/M,z%M,p[z],T-t*(z/M),h*(z%M));
-//    printf("maxDx str :: stol, znach, t :: x || %d :: %d, %.8f, %.5f :: %.5f  \n",c/M,c%M,p[c],T-t*(c/M),h*(c%M));
-//    printf("minDt str :: stol, znach, t :: x || %d :: %d, %.8f, %.5f :: %.5f  \n",u/M,u%M,p[u],T-t*(u/M),h*(u%M));
-//    printf("maxDt str :: stol, znach, t :: x || %d :: %d, %.8f, %.5f :: %.5f  \n",g/M,g%M,p[g],T-t*(g/M),h*(g%M));
 
 }
 
