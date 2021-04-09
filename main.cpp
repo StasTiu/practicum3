@@ -9,7 +9,7 @@ void makeDt(double *Dt,double *p,double t,int nn, int M);
 
 
 
-double diff(double a, double b, double p[],int nn, int M, int T,double *strMIN,int numMIN,double s)
+double diff(double a, double b, double p[],int nn, int M, int T,double *strMIN,int numMIN,double *str01,double *str09,double s)
 {
     int MAX,MIN,num=0,minDx,maxDx,minDt,maxDt;
     double x=0,*Dx;
@@ -65,15 +65,17 @@ double diff(double a, double b, double p[],int nn, int M, int T,double *strMIN,i
 int main ()
 {
     int nn=10,M=10,T=1,numMIN;
-    double  s=2.0,b = 0.1, a = 0.01,*strMIN;
+    double  s=2.0,b = 0.1, a = 0.01,*strMIN,*str01,*str09;
     strMIN= (double *) malloc (5 * sizeof (double));
+    str01= (double *) malloc (5 * sizeof (double));
+    str09= (double *) malloc (5 * sizeof (double));
     for(int j=0; j<1;j++){
         M = 100*(j+1);
         nn=M*M*3;
         double *p;
         p = (double *)malloc((2*M)* sizeof (double));
         for(int i=0;i<2*M;i++){p[i]=100;}
-        diff(a,b,p,nn,M,T,strMIN,numMIN,s);
+        diff(a,b,p,nn,M,T,strMIN,numMIN,str01,str09,s);
         /*                   Dt = (double *) malloc (M * nn * sizeof (double));
           if (Dt == NULL)
           {

@@ -18,7 +18,7 @@ lambda (double x)
 
 
 double
-diff (double a, double b, double p[], int nn, int M, int T,double *strMIN,int numMIN,double s)
+diff (double a, double b, double p[], int nn, int M, int T,double *strMIN,int numMIN,double str01[],double str09[],double s)
 {
     int  MAX, MIN, num = 0, minDx, maxDx, minDt, maxDt;
     double x = 0, *Dx, *Dt;
@@ -49,24 +49,32 @@ diff (double a, double b, double p[], int nn, int M, int T,double *strMIN,int nu
         {
             p[i] = X[i - 1];
         }
-        for (int i =0; i <= M - 3; i++)
-        {
-            printf("%.8f   ", X[i]);
-        }
 
         p[0] = (-p[1]/h+(h*p[(1)*M])/(2*a*t)+(h)/(2*a)-1)/((-1/h-(h)/(2*a*t))) ;
         p[M - 1] =(p[M - 2]/h+(h*p[(1)*M+M-1])/(2*a*t)-(h)/(2*a))/(1/h+(h)/(2*a*t)+h/(2*a));
-        for(int i=0;i<2*M;i++)
-        {
-            if(p[i]<=s){s=p[i];numMIN=j;}
+        if(j==1){
+            for(int i=0;i<5;i++)
+                str09[i]=p[i*(M/4)];
+            printf("%d////", j);
+            printf("\n");
         }
-        for(int k=0;k<5;k++){strMIN[k]=0;}
+        if(j==nn-2){
+            for(int i=0;i<5;i++)
+                str01[i]=p[i*(M/4)];
+            printf("%d////", j);
+        }
+        for( int i=0;i<M;i++)
+
+        {
+            if(p[i]-p[i+M]<=s){s=p[i];numMIN=j;}
+        }
+        for(int k=0;k<5;k++){strMIN[k*(M/4)]=0;}
         for (int i = 0; i <= M - 1; i++){
 
             // printf("%.8f   ", p[i+M]);
             p[i+M]=p[i];
         }
-        printf("\n");
+        //printf("\n");
 
 
     }
@@ -92,37 +100,26 @@ diff (double a, double b, double p[], int nn, int M, int T,double *strMIN,int nu
 int main ()
 {
     int nn=10,M=10,T=1,numMIN;
-    double  s=2.0,b = 0.1, a = 0.01,*strMIN;
+    double  s=2.0,b = 0.1, a = 0.01,*strMIN,*str01,*str09;
     strMIN= (double *) malloc (5 * sizeof (double));
+    str01= (double *) malloc (5 * sizeof (double));
+    str09= (double *) malloc (5 * sizeof (double));
     for(int j=0; j<1;j++){
-        M = 100*(j+1);
-        nn=10;
+        M = 20*(j+1);
+        nn=200;
         double *p;
         p = (double *)malloc((2*M)* sizeof (double));
         for(int i=0;i<2*M;i++){p[i]=100;}
-        diff(a,b,p,nn,M,T,strMIN,numMIN,s);
-        /*                   Dt = (double *) malloc (M * nn * sizeof (double));
-          if (Dt == NULL)
-          {
-         printf ("6\n");
-         return -1;
-       }
-       for (i = 0; i < M * nn; i++)
-       {
-         Dt[i] = 100;
-       }
-       makeDt (Dt, p, t,nn,M);
-       minDt1=Min(Dt,0,nn,M);
-       printf ( "0.1 & %.8f & %.8f  & %.8f & %.8f & %.8f", p[M*(nn/10)],p[M*(nn/10)+M/4],p[M*(nn/10)+M/2],p[M*(nn/10)+3*M/4],p[M*(nn/10)+M-1]) ;
-       printf("\\\\");
-       printf("\n");
-       printf ( "$t_{min D_t}$ & %.8f & %.8f  & %.8f & %.8f & %.8f", p[M*(minDt1/M)],p[M*(minDt1/M)+M/4],p[M*(minDt1/M)+M/2],p[M*(minDt1/M)+3*M/4],p[M*(minDt1/M)+M-1]) ;
-       printf("\\\\");
-       printf("\n");
-       printf ( "0.9 & %.8f & %.8f  & %.8f & %.8f & %.8f", p[M*9*(nn/10)],p[M*9*(nn/10)+M/4],p[M*9*(nn/10)+M/2],p[M*9*(nn/10)+3*M/4],p[M*9*(nn/10)+M-1]);
-       printf("\\\\");
+        diff(a,b,p,nn,M,T,strMIN,numMIN,str01,str09,s);
+        printf ( "0.1 & %.15f & %.15f  & %.15f & %.15f & %.15f",str01[0],str01[1],str01[2],str01[3],str01[4]);
+        printf("\\\\");
         printf("\n");
-       }*/
+        printf ( "$t_{min D_t}$ & %.8f & %.8f  & %.8f & %.8f & %.8f",strMIN[0],strMIN[1],strMIN[2],strMIN[3],strMIN[4]) ;
+        printf("\\\\");
+        printf("\n");
+        printf ( "0.9 & %.8f & %.8f  & %.8f & %.8f & %.8f",str09[0],str09[1],str09[2],str09[3],str09[4]);
+        printf("\\\\");
+
         /*for(int j=0; j<2;j++){
             M = 20*(j+1);
             nn=M*M*3;
