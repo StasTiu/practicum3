@@ -14,7 +14,7 @@ lambda (double x)
 {
     if(x<=1){
         return x * (1 -  x) * (1 -  x);}
-
+return 0;
 }
 
 
@@ -83,6 +83,7 @@ diff (double a, double b, double p[], int nn, int M, int T, double eps)
        printf("%.8f   ", Dx[i]);
        }
        printf("\n");*/
+    return 0;
 }
 
 
