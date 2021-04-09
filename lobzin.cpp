@@ -18,10 +18,10 @@ lambda (double x)
 
 
 double
-diff (double a, double b, double p[], int nn, int M, int T)
+diff (double a, double b, double p[], int nn, int M, int T,double *strMIN,int numMIN,double s)
 {
     int  MAX, MIN, num = 0, minDx, maxDx, minDt, maxDt;
-    double x = 0, s, *Dx, *Dt;
+    double x = 0, *Dx, *Dt;
     double t, n1, M1, h;
     n1 = nn;
     M1 = M;
@@ -56,6 +56,11 @@ diff (double a, double b, double p[], int nn, int M, int T)
 
         p[0] = (-p[1]/h+(h*p[(1)*M])/(2*a*t)+(h)/(2*a)-1)/((-1/h-(h)/(2*a*t))) ;
         p[M - 1] =(p[M - 2]/h+(h*p[(1)*M+M-1])/(2*a*t)-(h)/(2*a))/(1/h+(h)/(2*a*t)+h/(2*a));
+        for(int i=0;i<2*M;i++)
+        {
+            if(p[i]<=s){s=p[i];numMIN=j;}
+        }
+        for(int k=0;k<5;k++){strMIN[k]=0;}
         for (int i = 0; i <= M - 1; i++){
 
             // printf("%.8f   ", p[i+M]);
@@ -86,15 +91,16 @@ diff (double a, double b, double p[], int nn, int M, int T)
 
 int main ()
 {
-    int nn=10,M=10,T=1;
-    double  b = 0.1, a = 0.01;
+    int nn=10,M=10,T=1,numMIN;
+    double  s=2.0,b = 0.1, a = 0.01,*strMIN;
+    strMIN= (double *) malloc (5 * sizeof (double));
     for(int j=0; j<1;j++){
         M = 100*(j+1);
         nn=10;
         double *p;
         p = (double *)malloc((2*M)* sizeof (double));
         for(int i=0;i<2*M;i++){p[i]=100;}
-        diff(a,b,p,nn,M,T);
+        diff(a,b,p,nn,M,T,strMIN,numMIN,s);
         /*                   Dt = (double *) malloc (M * nn * sizeof (double));
           if (Dt == NULL)
           {

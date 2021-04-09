@@ -5,22 +5,20 @@ void RESHI(double *a, double *x, double *b,int N);
 int Max(double *p,int nn, int M);
 int Min(double *p,int w,int nn, int M);
 void makeAandB(double *p,double *A, double *B, double t, double h,double a,int j,int M);
-void PRINT(double *p,double t,double h, double s,int x, int y,int z,int c,int u, int g,int nn, int M, int T, double eps);
 void makeDt(double *Dt,double *p,double t,int nn, int M);
 
 
 
-double diff(double a, double b, double p[],int nn, int M, int T)
+double diff(double a, double b, double p[],int nn, int M, int T,double *strMIN,int numMIN,double s)
 {
     int MAX,MIN,num=0,minDx,maxDx,minDt,maxDt;
-    double x=0,s,*Dx;
+    double x=0,*Dx;
     double t, n1, M1, h;
     n1=nn;
     M1=M;
     t=T/(n1-1);
     h=2/(M1-1);
     for(int i=M; i<=M*2-1; i++){p[i]=1;}
-
     for(int j=nn-2; j>=0; j--)
     {
         double *A,*B,*X;
@@ -36,9 +34,13 @@ double diff(double a, double b, double p[],int nn, int M, int T)
         }
         p[0]=1;
         p[M-1] = 1;
-        for (int i = 0; i <= M - 1; i++){
-
-            // printf("%.8f   ", p[i+M]);
+        for(int i=0;i<2*M;i++)
+        {
+            if(p[i]<=s){s=p[i];numMIN=j;}
+        }
+        for(int k=0;k<5;k++){strMIN[k]=0;}
+        for (int i = 0; i <= M - 1; i++)
+        {
             p[i+M]=p[i];
 
         }
@@ -62,15 +64,16 @@ double diff(double a, double b, double p[],int nn, int M, int T)
 
 int main ()
 {
-    int nn=10,M=10,T=1;
-    double  b = 0.1, a = 0.01, eps=0.00000001;
+    int nn=10,M=10,T=1,numMIN;
+    double  s=2.0,b = 0.1, a = 0.01,*strMIN;
+    strMIN= (double *) malloc (5 * sizeof (double));
     for(int j=0; j<1;j++){
         M = 100*(j+1);
         nn=M*M*3;
         double *p;
         p = (double *)malloc((2*M)* sizeof (double));
         for(int i=0;i<2*M;i++){p[i]=100;}
-        diff(a,b,p,nn,M,T);
+        diff(a,b,p,nn,M,T,strMIN,numMIN,s);
         /*                   Dt = (double *) malloc (M * nn * sizeof (double));
           if (Dt == NULL)
           {
@@ -100,7 +103,7 @@ int main ()
             t = T / (n1 - 1);
             double p[nn*M-1];
             for(i=0;i<nn*M;i++){p[i]=100;}
-            diff(a,b,p,nn,M,T,eps);
+            diff(a,b,p,nn,M,T);
                     Dt = (double *) malloc (M * nn * sizeof (double));
            if (Dt == NULL)
            {
@@ -119,7 +122,7 @@ int main ()
             t1 = T / (n2 - 1);
             double p1[nn1*M1-1];
             for(i=0;i<nn1*M1;i++){p1[i]=100;}
-            diff(a,b,p1,nn1,M1,T,eps);
+            diff(a,b,p1,nn1,M1,T);
                             Dt1 = (double *) malloc (M1 * nn1 * sizeof (double));
            if (Dt1 == NULL)
            {
@@ -138,7 +141,7 @@ int main ()
             t2 = T / (n3 - 1);
             double p2[nn2*M2-1];
             for(i=0;i<nn2*M2;i++){p2[i]=100;}
-            diff(a,b,p2,nn2,M2,T,eps);
+            diff(a,b,p2,nn2,M2,T);
                               Dt2 = (double *) malloc (M2 * nn2 * sizeof (double));
            if (Dt2 == NULL)
            {
