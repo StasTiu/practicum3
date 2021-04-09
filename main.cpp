@@ -6,156 +6,165 @@ int Max(double *p,int nn, int M);
 int Min(double *p,int w,int nn, int M);
 void makeAandB(double *p,double *A, double *B, double t, double h,double a,int j,int M);
 void PRINT(double *p,double t,double h, double s,int x, int y,int z,int c,int u, int g,int nn, int M, int T, double eps);
-void makeDx(double *Dx, double *p, double h,int nn, int M);
 void makeDt(double *Dt,double *p,double t,int nn, int M);
 
 
 
-double diff(double a, double b, double p[],int nn, int M, int T, double eps,double *Dt)
+double diff(double a, double b, double p[],int nn, int M, int T)
 {
-    int L,MAX,MIN,num=0,minDx,maxDx,minDt,maxDt;
+    int MAX,MIN,num=0,minDx,maxDx,minDt,maxDt;
     double x=0,s,*Dx;
     double t, n1, M1, h;
     n1=nn;
     M1=M;
     t=T/(n1-1);
     h=2/(M1-1);
-    for(int i=M*(nn-1); i<=M*nn-1; i++){p[i]=1;}
+    for(int i=M*(nn-1); i<=M*2-1; i++){p[i]=1;}
 
     for(int j=nn-2; j>=0; j--)
     {
         double *A,*B,*X;
         B = (double *) malloc ((M - 2) * sizeof (double));
         X = (double *) malloc ((M - 2) * sizeof (double));
-        A = (double *) malloc ((M - 2) * (M - 2) * sizeof (double));
-
-        for(int i=0;i<(M-2)*(M-2);i++){A[i]=0;}
-        for(int i=0;i<M*nn;i++){Dt[i]=100;}
+        A = (double *) malloc ((M - 2) * 3 * sizeof (double));
 
         makeAandB(p,A,B,t,h,a,j,M);
         RESHI(A,X,B,M-2);
-        L=0;
         for(int i=1;i<=M-2;i++)
         {
             p[j*M+i]=X[i-1];
-            if(fabs(p[j*M+i]-p[(j+1)*M+i])<eps){L++;}
         }
         p[j*M]=1;
         p[j*M+M-1] = 1;
-        if(L==M-2){s=(nn-j)*t;num=j;j=-1;}
-//        makeDx(Dx,p,h,nn,M);
-        makeDt(Dt,p,t,nn,M);
     }
-    /*for(int i=0; i<=nn*M-1; i++)
+    for(int i=0; i<=2*M-1; i++)
     {
         if (i%M==0) printf("\n");
         printf("%.8f   ", p[i]);
     }
     printf("\n");
-    printf("\n");
-    for(int i=0; i<=nn*M-1; i++)
-    {
-        if (i%M==0) printf("\n");
-        printf("%.8f   ", Dx[i]);
-    }
-    printf("\n");
-    printf("\n");
-    for(int i=0; i<=nn*M-1; i++)
-    {
-        if (i%M==0) printf("\n");
-        printf("%.8f   ", Dt[i]);
-    }*/
-//    MAX=Max(p,nn,M);
-//    MIN=Min(p,num,nn,M);
-//    minDx=Min(Dx,0,nn,M);
-//    maxDx=Max(Dx,nn,M);
-//    minDt=Min(Dt,0,nn,M);
-//    maxDt=Max(Dt,nn,M);
-//    PRINT(p,t,h,s,MIN,MAX,minDx,maxDx,minDt,maxDt,nn,M,T,eps);
+    printf("\n");/*
+       for(int i=0; i<=nn*M-1; i++)
+       {
+       if (i%M==0) printf("\n");
+       printf("%.8f   ", Dx[i]);
+       }
+       printf("\n");*/
     return 0;
 }
 
 
 int main ()
 {
-    int  nn=10,M=10,nn1=10,M1=10,nn2=10,M2=10,T=1, u, minDt1, minDt2, minDt3;
-    double  b = 0.1, a = 0.01, eps=0.00000001, *Dt,*Dt1,*Dt2,t1,n1,n2,t,n3,t2;
-    for(int j=0; j<2;j++) {
-
-        M = 10 * (j + 1);
-        nn = M * M * 3;
-        n1 = nn;
-        t = T / (n1 - 1);
-        double p[nn * M - 1];
-        for (int i = 0; i < nn * M; i++) { p[i] = 100; }
-        Dt=(double*)malloc(M*nn*sizeof(double));
-        diff(a, b, p, nn, M, T, eps,Dt);
-        minDt1 = Min(Dt, 0, nn, M);
-
-        M1 = 10 * (j + 2);
-        nn1 = M1 * M1 * 3;
-        n2 = nn1;
-        t1 = T / (n2 - 1);
-        double p1[nn1 * M1 - 1];
-        for (int i = 0; i < nn1 * M1; i++) { p1[i] = 100; }
-        Dt1=(double*)malloc(M1*nn1*sizeof(double));
-        diff(a, b, p1, nn1, M1, T, eps,Dt1);
-        minDt2 = Min(Dt1, 0, nn1, M1);
-
-        M2 = 10 * (j + 3);
-        nn2 = M2 * M2 * 3;
-        n3 = nn2;
-        t2 = T / (n3 - 1);
-        double p2[nn2 * M2 - 1];
-        for (int i = 0; i < nn2 * M2; i++) { p2[i] = 100; }
-        Dt2=(double*)malloc(M2*nn2*sizeof(double));
-        diff(a, b, p2, nn2, M2, T, eps,Dt2);
-        minDt3 = Min(Dt2, 0, nn2, M2);
-
-
-        M=M/2;
-        M1=M1/2;
-        M2=M2/2;
-        printf("0.1 & %.8f & %.8f  & %.8f & %.8f & %.8f",
-               (p[M * (nn / 10)] - p1[M1 * (nn1 / 10)]) / (p1[M1 * (nn1 / 10)] - p2[M2 * (nn2 / 10)]),
-               (p[M * (nn / 10) + M / 4] - p1[M1 * (nn1 / 10) + M1 / 4]) /
-               (p1[M1 * (nn1 / 10) + M1 / 4] - p2[M2 * (nn2 / 10) + M2 / 4]),
-               (p[M * (nn / 10) + M / 2] - p1[M1 * (nn1 / 10) + M1 / 2]) /
-               (p1[M1 * (nn1 / 10) + M1 / 2] - p2[M2 * (nn2 / 10) + M2 / 2]),
-               (p[M * (nn / 10) + 3 * M / 4] - p1[M1 * (nn1 / 10) + 3 * M1 / 4]) /
-               (p1[M1 * (nn1 / 10) + 3 * M1 / 4] - p2[M2 * (nn2 / 10) + 3 * M2 / 4]),
-               (p[M * (nn / 10) + M - 1] - p1[M1 * (nn1 / 10) + M1 - 1]) /
-               (p1[M1 * (nn1 / 10) + M1 - 1] - p2[M2 * (nn2 / 10) + M2 - 1]));
+    int nn=10,M=10,T=1;
+    double  b = 0.1, a = 0.01, eps=0.00000001;
+    for(int j=0; j<1;j++){
+        M = 100*(j+1);
+        nn=10;
+        double *p;
+        p = (double *)malloc((2*M)* sizeof (double));
+        for(int i=0;i<2*M;i++){p[i]=100;}
+        diff(a,b,p,nn,M,T);
+        /*                   Dt = (double *) malloc (M * nn * sizeof (double));
+          if (Dt == NULL)
+          {
+         printf ("6\n");
+         return -1;
+       }
+       for (i = 0; i < M * nn; i++)
+       {
+         Dt[i] = 100;
+       }
+       makeDt (Dt, p, t,nn,M);
+       minDt1=Min(Dt,0,nn,M);
+       printf ( "0.1 & %.8f & %.8f  & %.8f & %.8f & %.8f", p[M*(nn/10)],p[M*(nn/10)+M/4],p[M*(nn/10)+M/2],p[M*(nn/10)+3*M/4],p[M*(nn/10)+M-1]) ;
+       printf("\\\\");
+       printf("\n");
+       printf ( "$t_{min D_t}$ & %.8f & %.8f  & %.8f & %.8f & %.8f", p[M*(minDt1/M)],p[M*(minDt1/M)+M/4],p[M*(minDt1/M)+M/2],p[M*(minDt1/M)+3*M/4],p[M*(minDt1/M)+M-1]) ;
+       printf("\\\\");
+       printf("\n");
+       printf ( "0.9 & %.8f & %.8f  & %.8f & %.8f & %.8f", p[M*9*(nn/10)],p[M*9*(nn/10)+M/4],p[M*9*(nn/10)+M/2],p[M*9*(nn/10)+3*M/4],p[M*9*(nn/10)+M-1]);
+       printf("\\\\");
+        printf("\n");
+       }*/
+        /*for(int j=0; j<2;j++){
+            M = 20*(j+1);
+            nn=M*M*3;
+            n1=nn;
+            t = T / (n1 - 1);
+            double p[nn*M-1];
+            for(i=0;i<nn*M;i++){p[i]=100;}
+            diff(a,b,p,nn,M,T,eps);
+                    Dt = (double *) malloc (M * nn * sizeof (double));
+           if (Dt == NULL)
+           {
+          printf ("6\n");
+          return -1;
+        }
+        for (i = 0; i < M * nn; i++)
+        {
+          Dt[i] = 100;
+        }
+        makeDt (Dt, p, t,nn,M);
+        minDt1=Min(Dt,0,nn,M);
+            M1 = 20*(j+2);
+            nn1= M1*M1*3;
+            n2=nn1;
+            t1 = T / (n2 - 1);
+            double p1[nn1*M1-1];
+            for(i=0;i<nn1*M1;i++){p1[i]=100;}
+            diff(a,b,p1,nn1,M1,T,eps);
+                            Dt1 = (double *) malloc (M1 * nn1 * sizeof (double));
+           if (Dt1 == NULL)
+           {
+          printf ("6\n");
+          return -1;
+        }
+        for (i = 0; i < M1 * nn1; i++)
+        {
+          Dt1[i] = 100;
+        }
+            makeDt (Dt1, p1, t1,nn1,M1);
+            minDt2=Min(Dt1,0,nn1,M1);
+            M2 = 20*(j+3);
+            nn2=M2*M2*3;
+            n3=nn2;
+            t2 = T / (n3 - 1);
+            double p2[nn2*M2-1];
+            for(i=0;i<nn2*M2;i++){p2[i]=100;}
+            diff(a,b,p2,nn2,M2,T,eps);
+                              Dt2 = (double *) malloc (M2 * nn2 * sizeof (double));
+           if (Dt2 == NULL)
+           {
+          printf ("6\n");
+          return -1;
+        }
+        for (i = 0; i < M1 * nn1; i++)
+        {
+          Dt2[i] = 100;
+        }
+            makeDt (Dt2, p2, t2,nn2,M2);
+            minDt3=Min(Dt2,0,nn2,M2);
+        printf ( "0.1 & %.8f & %.8f  & %.8f & %.8f & %.8f",(p[M*(nn/10)]-p1[M1*(nn1/10)]),(p[M*(nn/10)+M/4]-p1[M1*(nn1/10)+M1/4]),(p[M*(nn/10)+M/2]-p1[M1*(nn1/10)+M1/2]),(p[M*(nn/10)+3*M/4]-p1[M1*(nn1/10)+3*M1/4]),(p[M*(nn/10)+M-1]-p1[M1*(nn1/10)+M1-1])) ;
         printf("\\\\");
         printf("\n");
-        printf("$t_{min D_t}$ & %.8f & %.8f  & %.8f & %.8f & %.8f",
-               (p[M * (minDt1 / M)] - p1[M1 * (minDt2 / M1)]) / (p1[M * (minDt2 / M)] - p2[M2 * (minDt3 / M2)]),
-               (p[M * (minDt1 / M) + M / 4] - p1[M1 * (minDt2 / M1) + M1 / 4]) /
-               (p1[M1 * (minDt2 / M1) + M1 / 4] - p2[M2 * (minDt3 / M2) + M2 / 4]),
-               (p[M * (minDt1 / M) + M / 2] - p1[M1 * (minDt2 / M1) + M1 / 2]) /
-               (p1[M1 * (minDt2 / M1) + M1 / 2] - p2[M2 * (minDt3 / M2) + M2 / 2]),
-               (p[M * (minDt1 / M) + 3 * M / 4] - p1[M1 * (minDt2 / M1) + 3 * M1 / 4]) /
-               (p1[M1 * (minDt2 / M1) + 3 * M1 / 4] - p2[M2 * (minDt3 / M2) + 3 * M2 / 4]),
-               (p[M * (minDt1 / M) + M - 1] - p1[M1 * (minDt2 / M1) + M1 - 1]) /
-               (p1[M1 * (minDt2 / M1) + M1 - 1] - p2[M2 * (minDt3 / M2) + M2 - 1]));
+        printf ( "$t_{min D_t}$ & %.8f & %.8f  & %.8f & %.8f & %.8f", (p[M*(minDt1/M)]),(p[M*(minDt1/M)+M/4]-p1[M1*(minDt2/M1)+M1/4]),(p[M*(minDt1/M)+M/2]-p1[M1*(minDt2/M1)+M1/2]),(p[M*(minDt1/M)+3*M/4]-p1[M1*(minDt2/M1)+3*M1/4]),(p[M*(minDt1/M)+M-1]-p1[M1*(minDt2/M1)+M1-1])) ;
         printf("\\\\");
         printf("\n");
-        printf("0.9 & %.8f & %.8f  & %.8f & %.8f & %.8f",
-               (p[9 * M * (nn / 10)] - p1[9 * M1 * (nn1 / 10)]) / (p1[9 * M1 * (nn1 / 10)] - p2[9 * M2 * (nn2 / 10)]),
-               (p[9 * M * (nn / 10) + M / 4] - p1[9 * M1 * (nn1 / 10) + M1 / 4]) /
-               (p1[9 * M1 * (nn1 / 10) + M1 / 4] - p2[9 * M2 * (nn2 / 10) + M2 / 4]),
-               (p[9 * M * (nn / 10) + M / 2] - p1[9 * M1 * (nn1 / 10) + M1 / 2]) /
-               (p1[9 * M1 * (nn1 / 10) + M1 / 2] - p2[9 * M2 * (nn2 / 10) + M2 / 2]),
-               (p[9 * M * (nn / 10) + 3 * M / 4] - p1[9 * M1 * (nn1 / 10) + 3 * M1 / 4]) /
-               (p1[9 * M1 * (nn1 / 10) + 3 * M1 / 4] - p2[9 * M2 * (nn2 / 10) + 3 * M2 / 4]),
-               (p[9 * M * (nn / 10) + M - 1] - p1[9 * M1 * (nn1 / 10) + M1 - 1]) /
-               (p1[9 * M1 * (nn1 / 10) + M1 - 1] - p2[9 * M2 * (nn2 / 10) + M2 - 1]));
+        printf ( "0.9 & %.8f & %.8f  & %.8f & %.8f & %.8f",(p[9*M*(nn/10)]-p1[9*M1*(nn1/10)]),(p[9*M*(nn/10)+M/4]-p1[9*M1*(nn1/10)+M1/4]),(p[9*M*(nn/10)+M/2]-p1[9*M1*(nn1/10)+M1/2]),(p[9*M*(nn/10)+3*M/4]-p1[9*M1*(nn1/10)+3*M1/4]),(p[9*M*(nn/10)+M-1]-p1[9*M1*(nn1/10)+M1-1])) ;
         printf("\\\\");
         printf("\n");
-        M1=M1*2;
-        M=M*2;
-        M2=M2*2;
+        printf ( "0.1 & %.8f & %.8f  & %.8f & %.8f & %.8f",(p[M*(nn/10)]-p1[M1*(nn1/10)])/(p1[M1*(nn1/10)]-p2[M2*(nn2/10)]),(p[M*(nn/10)+M/4]-p1[M1*(nn1/10)+M1/4])/(p1[M1*(nn1/10)+M1/4]-p2[M2*(nn2/10)+M2/4]),(p[M*(nn/10)+M/2]-p1[M1*(nn1/10)+M1/2])/(p1[M1*(nn1/10)+M1/2]-p2[M2*(nn2/10)+M2/2]),(p[M*(nn/10)+3*M/4]-p1[M1*(nn1/10)+3*M1/4])/(p1[M1*(nn1/10)+3*M1/4]-p2[M2*(nn2/10)+3*M2/4]),(p[M*(nn/10)+M-1]-p1[M1*(nn1/10)+M1-1])/(p1[M1*(nn1/10)+M1-1]-p2[M2*(nn2/10)+M2-1])) ;
+        printf("\\\\");
+        printf("\n");
+        printf ( "$t_{min D_t}$ & %.8f & %.8f  & %.8f & %.8f & %.8f", (p[M*(minDt1/M)]-p1[M1*(minDt2/M1)])/(p1[M*(minDt2/M)]-p2[M2*(minDt3/M2)]),(p[M*(minDt1/M)+M/4]-p1[M1*(minDt2/M1)+M1/4])/(p1[M1*(minDt2/M1)+M1/4]-p2[M2*(minDt3/M2)+M2/4]),(p[M*(minDt1/M)+M/2]-p1[M1*(minDt2/M1)+M1/2])/(p1[M1*(minDt2/M1)+M1/2]-p2[M2*(minDt3/M2)+M2/2]),(p[M*(minDt1/M)+3*M/4]-p1[M1*(minDt2/M1)+3*M1/4])/(p1[M1*(minDt2/M1)+3*M1/4]-p2[M2*(minDt3/M2)+3*M2/4]),(p[M*(minDt1/M)+M-1]-p1[M1*(minDt2/M1)+M1-1])/(p1[M1*(minDt2/M1)+M1-1]-p2[M2*(minDt3/M2)+M2-1])) ;
+        printf("\\\\");
+        printf("\n");
+      printf ( "0.9 & %.8f & %.8f  & %.8f & %.8f & %.8f",(p[9*M*(nn/10)]-p1[9*M1*(nn1/10)])/(p1[9*M1*(nn1/10)]-p2[9*M2*(nn2/10)]),(p[9*M*(nn/10)+M/4]-p1[9*M1*(nn1/10)+M1/4])/(p1[9*M1*(nn1/10)+M1/4]-p2[9*M2*(nn2/10)+M2/4]),(p[9*M*(nn/10)+M/2]-p1[9*M1*(nn1/10)+M1/2])/(p1[9*M1*(nn1/10)+M1/2]-p2[9*M2*(nn2/10)+M2/2]),(p[9*M*(nn/10)+3*M/4]-p1[9*M1*(nn1/10)+3*M1/4])/(p1[9*M1*(nn1/10)+3*M1/4]-p2[9*M2*(nn2/10)+3*M2/4]),(p[9*M*(nn/10)+M-1]-p1[9*M1*(nn1/10)+M1-1])/(p1[9*M1*(nn1/10)+M1-1]-p2[9*M2*(nn2/10)+M2-1])) ;
+        printf("\\\\");
+        printf("\n");*/
     }
+
     return 0;
 }
 
@@ -181,7 +190,6 @@ int Min(double *p,int w,int nn, int M)
     }
     return k;
 }
-
 void RESHI(double *a, double *x, double *b,int N)
 {
     double *s,*p,*y;
@@ -191,14 +199,14 @@ void RESHI(double *a, double *x, double *b,int N)
     y[0]=a[0];
     s[0]=-a[1]/y[0];
     p[0]=b[0]/y[0];
-    for(int i=1;i<N;i++)
+    for(int i=1;i<N-1;i++)
     {
-        y[i]=a[N*i+i]+a[N*i+i-1]*s[i-1];
-        s[i]=-a[N*i+i+1]/y[i];
-        p[i]=(b[i]-a[N*i+i-1]*p[i-1])/y[i];
+        y[i]=a[3*i]+a[3*i+2]*s[i-1];
+        s[i]=-a[3*i+1]/y[i];
+        p[i]=(b[i]-a[3*i+2]*p[i-1])/y[i];
     }
-    y[N-1]=a[N*N-1]+a[N*N-2]*s[N-2];
-    p[N-1]=(b[N-1]-a[N*N-2]*p[N-2])/y[N-1];
+    y[N-1]=a[(N-1)*3]+a[(N-1)*3+2]*s[N-2];
+    p[N-1]=(b[N-1]-a[(N-1)*3+2]*p[N-2])/y[N-1];
     x[N-1]=p[N-1];
     for(int i=N-2;i>=0;i--)
     {
@@ -208,37 +216,24 @@ void RESHI(double *a, double *x, double *b,int N)
 }
 void makeAandB(double *p,double *A, double *B, double t, double h,double a, int j, int M)
 {
-    A[0] = 1/t+a/(h*h)+(h*h)/2-a/(2*h*h*h*(1/h+h/(2*a*t)));
-    A[1] = -a/(2*h*h);
+    A[0]=1/t+a/(h*h)+(1-h)*(1-h);
+    A[1]=-a/(2*h*h);
     A[(M-2)*(M-2)-2]=-a/(2*h*h);
-    A[(M-2)*(M-2)-1]=1/t+a/(h*h)+(h*(M-2)*h*(M-2))/2-a/(2*h*h*h*(1/h+(h)/(2*a*t)+(h/(2*a))));
-    B[0]=p[(j+1)*(M)+1]*(1/t-(h*h)/2)+a*(p[(j+1)*M]-2*p[(j+1)*M+1]+p[(j+1)*M+2])/(2*h*h) -2
-         +a*((h*p[(j+1)*M])/(2*a*t)+(h)/(2*a))/(2*h*h*(-1/h-(h)/(2*a*t)));
-    B[M-3]=p[(j+1)*(M)+M-2]*(1/t-(h*(M-2)*(M-2)*h)/2)+a*(p[(j+1)*M+M-3]-2*p[(j+1)*M+M-2]+p[(j+1)*M+M-1])/(2*h*h) -1
-           +a*((h*p[(j+1)*M+M-1])/(2*a*t)-(h)/(2*a))/(2*h*h*(1/h+(h)/(2*a*t)+h/(2*a)));
+    A[(M-2)*(M-2)-1]=1/t+a/(h*h)+(1-h)*(1-h);
+
+    B[0]=a/(2*h*h)+p[(j+1)*(M)+1]*(1/t-(1+(1-h)*(1-h)))+a*(p[(j+1)*M]-2*p[(j+1)*M+1]+p[(j+1)*M+2])/(2*h*h);
+    B[M-3]= a/(2*h*h)+a*(p[(j+1)*M+M-3]-2*p[(j+1)*M+M-2]+p[(j+1)*M+M-1])/(2*h*h)+p[(j+1)*(M)+M-2]*(1/t-(1+(1-h)*(1-h)));
 
     for(int i=1; i<M-3; i++)
     {
         A[(M-2)*i+i-1]=-a/(2*h*h);
-        A[(M-2)*i+i]=1/t+a/(h*h)+(h*h*(i+1)*(i+1))/2;
-
+        A[(M-2)*i+i]=1/t+a/(h*h)+(1+(h*(i+1)-1)*(h*(i+1)-1))/2;
         A[(M-2)*i+i+1]=-a/(2*h*h);
-        B[i]=p[(j+1)*(M)+1+i]*(1/t-(h*(i+1)*(i+1)*h)/2)+a*(p[(j+1)*M+i]-2*p[(j+1)*M+1+i]+p[(j+1)*M+2+i])/(2*h*h) -1;
+        B[i]=p[(j+1)*(M)+1+i]*(1/t-(1+(h*(i+1)-1)*(h*(i+1)-1))/2)+a*(p[(j+1)*M+i]-2*p[(j+1)*M+1+i]+p[(j+1)*M+2+i])/(2*h*h);
     }
     return;
 }
-void makeDx(double *Dx, double *p, double h,int nn, int M)
-{
-    int i,j;
-    for(j=0;j<nn-1;j++)
-    {
-        for(i=j*M+1;i<=(j+1)*M-2;i++)
-        {
-            Dx[i]=(p[i+1]-p[i-1])/2/h;
-        }
-    }
-    return;
-}
+
 void makeDt(double *Dt, double *p, double t,int nn, int M)
 {
     int i,j;
@@ -253,3 +248,31 @@ void makeDt(double *Dt, double *p, double t,int nn, int M)
 }
 
 
+//int MAIN()
+//{
+//    double *a,*b;
+//    double *x;
+//    a=(double*)malloc(3*3*sizeof (double));
+//    b=(double*)malloc(3*sizeof (double));
+//    x=(double*)malloc(3*sizeof (double));
+//
+//    for(int i=0;i<3;i++)
+//    {
+//        a[i*3]=1;
+//        a[i*3+1]=0;
+//        a[i*3+2]=0;
+//        b[i]=1;
+//    }
+//    for(int i=0;i<9;i++)
+//    {
+//        printf("%.3f  ",a[i]);
+//    }
+//    printf("\n");
+//    RESHI(a,x,b,3);
+//    for(int i=0;i<3;i++)
+//    {
+//        printf("%.3f  ",x[i]);
+//    }
+//    printf("\n");
+//    return 0;
+//}

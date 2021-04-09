@@ -5,7 +5,6 @@ void RESHI(double *a, double *x, double *b,int N);
 int Max(double *p, int nn, int M);
 int Min(double *p,int w, int nn, int M);
 void makeAandB(double *p,double *A, double *B, double t, double h,double a, double b, int nn, int M);
-void makeDx(double *Dx, double *p, double h, int nn, int M);
 void makeDt(double *Dt,double *p,double t, int nn, int M);
 
 
@@ -19,9 +18,9 @@ lambda (double x)
 
 
 double
-diff (double a, double b, double p[], int nn, int M, int T, double eps)
+diff (double a, double b, double p[], int nn, int M, int T)
 {
-    int L, MAX, MIN, num = 0, minDx, maxDx, minDt, maxDt;
+    int  MAX, MIN, num = 0, minDx, maxDx, minDt, maxDt;
     double x = 0, s, *Dx, *Dt;
     double t, n1, M1, h;
     n1 = nn;
@@ -38,21 +37,17 @@ diff (double a, double b, double p[], int nn, int M, int T, double eps)
 
     for (int j = nn - 2; j >= 0; j--)
     {
-        double *A;
-        double *B;
-        double *X ;
+        double *A,*B,*X;
         B = (double *) malloc ((M - 2) * sizeof (double));
         X = (double *) malloc ((M - 2) * sizeof (double));
         A = (double *) malloc ((M - 2) * 3 * sizeof (double));
+
         makeAandB (p, A, B, t, h, a, b, nn,M);
         RESHI (A, X, B, M - 2);
-        L = 0;
+
         for (int i = 1; i <= M - 2; i++)
         {
             p[i] = X[i - 1];
-
-            if (fabs (p[ i] - p[(1) * M + i]) < eps){L++;}
-
         }
         for (int i =0; i <= M - 3; i++)
         {
@@ -92,14 +87,14 @@ diff (double a, double b, double p[], int nn, int M, int T, double eps)
 int main ()
 {
     int nn=10,M=10,T=1;
-    double  b = 0.1, a = 0.01, eps=0.00000001;
+    double  b = 0.1, a = 0.01;
     for(int j=0; j<1;j++){
         M = 100*(j+1);
         nn=10;
         double *p;
         p = (double *)malloc((2*M)* sizeof (double));
         for(int i=0;i<2*M;i++){p[i]=100;}
-        diff(a,b,p,nn,M,T,eps);
+        diff(a,b,p,nn,M,T);
         /*                   Dt = (double *) malloc (M * nn * sizeof (double));
           if (Dt == NULL)
           {
@@ -129,7 +124,7 @@ int main ()
             t = T / (n1 - 1);
             double p[nn*M-1];
             for(i=0;i<nn*M;i++){p[i]=100;}
-            diff(a,b,p,nn,M,T,eps);
+            diff(a,b,p,nn,M,T);
                     Dt = (double *) malloc (M * nn * sizeof (double));
            if (Dt == NULL)
            {
@@ -148,7 +143,7 @@ int main ()
             t1 = T / (n2 - 1);
             double p1[nn1*M1-1];
             for(i=0;i<nn1*M1;i++){p1[i]=100;}
-            diff(a,b,p1,nn1,M1,T,eps);
+            diff(a,b,p1,nn1,M1,T);
                             Dt1 = (double *) malloc (M1 * nn1 * sizeof (double));
            if (Dt1 == NULL)
            {
@@ -167,7 +162,7 @@ int main ()
             t2 = T / (n3 - 1);
             double p2[nn2*M2-1];
             for(i=0;i<nn2*M2;i++){p2[i]=100;}
-            diff(a,b,p2,nn2,M2,T,eps);
+            diff(a,b,p2,nn2,M2,T);
                               Dt2 = (double *) malloc (M2 * nn2 * sizeof (double));
            if (Dt2 == NULL)
            {
@@ -227,9 +222,7 @@ int Min(double *p,int w, int nn, int M)
 }
 void RESHI(double *a, double *x, double *b,int N)
 {
-    double *s;
-    double *p;
-    double *y;
+    double *s,*p,*y;
     s = (double *) malloc (N * sizeof (double));
     p = (double *) malloc (N* sizeof (double));
     y = (double *) malloc (N* sizeof (double));
@@ -296,18 +289,7 @@ printf ("%.8f   ", A[i]);
 
 
 
-void makeDx(double *Dx, double *p, double h,int nn, int M)
-{
-    int i,j;
-    for(j=0;j<nn-1;j++)
-    {
-        for(i=j*M+1;i<=(j+1)*M-2;i++)
-        {
-            Dx[i]=(p[i+1]-p[i-1])/2/h;
-        }
-    }
-    return;
-}
+
 void makeDt(double *Dt, double *p, double t,int nn, int M)
 {
     int i,j;
