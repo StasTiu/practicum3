@@ -14,31 +14,21 @@ void makeDt(double *Dt,double *p,double t,int nn, int M);
 double diff(double a, double b, double p[],int nn, int M, int T, double eps,double *Dt)
 {
     int i,j,k,*c,L,MAX,MIN,num=0,minDx,maxDx,minDt,maxDt;
-    double x=0,*X,*A,*B,s,*Dx;
+    double x=0,s,*Dx;
     double t, n1, M1, h;
     n1=nn;
     M1=M;
     t=T/(n1-1);
-    h=1/(M1-1);
+    h=2/(M1-1);
     for(int i=M*(nn-1); i<=M*nn-1; i++){p[i]=1;}
 
     for(int j=nn-2; j>=0; j--)
     {
-        B=(double*)malloc((M-2)*sizeof(double));
-        if(B==NULL){printf("2\n");return -1;}
-        X=(double*)malloc((M-2)*sizeof(double));
-        if(X==NULL){printf("3\n");return -1;}
-        A=(double*)malloc((M-2)*(M-2)*sizeof(double));
-        if(A==NULL){printf("5\n");return -1;}
-        Dx=(double*)malloc(M*nn*sizeof(double));
-        if(Dx==NULL){printf("6\n");return -1;}
+        double *A = new double[(M-2)*(M-2)];
+        double *B = new double[M-2];
+        double *X = new double[M-2];
 
-        c=(int*)malloc((M-2)*sizeof(int));
-        if(c==NULL){printf("7\n");return -1;}
-
-        for(i=0;i<(M-2);i++){c[i]=i+1;}
         for(i=0;i<(M-2)*(M-2);i++){A[i]=0;}
-        for(i=0;i<M*nn;i++){Dx[i]=100;}
         for(i=0;i<M*nn;i++){Dt[i]=100;}
 
         makeAandB(p,A,B,t,h,a,j,M);
@@ -81,6 +71,7 @@ double diff(double a, double b, double p[],int nn, int M, int T, double eps,doub
 //    minDt=Min(Dt,0,nn,M);
 //    maxDt=Max(Dt,nn,M);
 //    PRINT(p,t,h,s,MIN,MAX,minDx,maxDx,minDt,maxDt,nn,M,T,eps);
+return 0;
 }
 
 

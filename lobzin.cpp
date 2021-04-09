@@ -22,7 +22,7 @@ double
 diff (double a, double b, double p[], int nn, int M, int T, double eps)
 {
     int i, j, k, *c, L, MAX, MIN, num = 0, minDx, maxDx, minDt, maxDt;
-    double x = 0, *X, *A, *B, s, *Dx, *Dt;
+    double x = 0, s, *Dx, *Dt;
     double t, n1, M1, h;
     n1 = nn;
     M1 = M;
@@ -38,9 +38,9 @@ diff (double a, double b, double p[], int nn, int M, int T, double eps)
 
     for (int j = nn - 2; j >= 0; j--)
     {
-        B = (double *) malloc ((M - 2) * sizeof (double));
-        X = (double *) malloc ((M - 2) * sizeof (double));
-        A = (double *) malloc ((M - 2) * (M - 2) * sizeof (double));
+        double *A = new double[(M-2)*(M-2)];
+        double *B = new double[M-2];
+        double *X = new double[M-2];
         for (i = 0; i < (M - 2) * (M - 2); i++)
         {
             A[i] = 0;
@@ -90,7 +90,7 @@ int main ()
     for(int j=0; j<1;j++){
         M = 100*(j+1);
         nn=M*M*3;
-        double p[2*M-1];
+        double *p = new double[2*M-1];
         for(i=0;i<nn*M;i++){p[i]=100;}
         diff(a,b,p,nn,M,T,eps);
         /*                   Dt = (double *) malloc (M * nn * sizeof (double));
