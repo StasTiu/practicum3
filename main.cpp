@@ -19,7 +19,7 @@ double diff(double a, double b, double p[],int nn, int M, int T)
     M1=M;
     t=T/(n1-1);
     h=2/(M1-1);
-    for(int i=M*(nn-1); i<=M*2-1; i++){p[i]=1;}
+    for(int i=M; i<=M*2-1; i++){p[i]=1;}
 
     for(int j=nn-2; j>=0; j--)
     {
@@ -32,10 +32,16 @@ double diff(double a, double b, double p[],int nn, int M, int T)
         RESHI(A,X,B,M-2);
         for(int i=1;i<=M-2;i++)
         {
-            p[j*M+i]=X[i-1];
+            p[i]=X[i-1];
         }
-        p[j*M]=1;
-        p[j*M+M-1] = 1;
+        p[0]=1;
+        p[M-1] = 1;
+        for (int i = 0; i <= M - 1; i++){
+
+            // printf("%.8f   ", p[i+M]);
+            p[i+M]=p[i];
+
+        }
     }
     for(int i=0; i<=2*M-1; i++)
     {
@@ -60,7 +66,7 @@ int main ()
     double  b = 0.1, a = 0.01, eps=0.00000001;
     for(int j=0; j<1;j++){
         M = 100*(j+1);
-        nn=10;
+        nn=M*M*3;
         double *p;
         p = (double *)malloc((2*M)* sizeof (double));
         for(int i=0;i<2*M;i++){p[i]=100;}
@@ -218,18 +224,20 @@ void makeAandB(double *p,double *A, double *B, double t, double h,double a, int 
 {
     A[0]=1/t+a/(h*h)+(1-h)*(1-h);
     A[1]=-a/(2*h*h);
-    A[(M-2)*(M-2)-2]=-a/(2*h*h);
-    A[(M-2)*(M-2)-1]=1/t+a/(h*h)+(1-h)*(1-h);
+    A[2] = 0;
+    A[(M-2)*3-2] = 0;
+    A[(M-2)*3-1]=-a/(2*h*h);
+    A[(M-2)*3-3]=1/t+a/(h*h)+(1-h)*(1-h);
 
-    B[0]=a/(2*h*h)+p[(j+1)*(M)+1]*(1/t-(1+(1-h)*(1-h)))+a*(p[(j+1)*M]-2*p[(j+1)*M+1]+p[(j+1)*M+2])/(2*h*h);
-    B[M-3]= a/(2*h*h)+a*(p[(j+1)*M+M-3]-2*p[(j+1)*M+M-2]+p[(j+1)*M+M-1])/(2*h*h)+p[(j+1)*(M)+M-2]*(1/t-(1+(1-h)*(1-h)));
+    B[0]=a/(2*h*h)+p[(1)*(M)+1]*(1/t-(1+(1-h)*(1-h)))+a*(p[(1)*M]-2*p[(1)*M+1]+p[(1)*M+2])/(2*h*h);
+    B[M-3]= a/(2*h*h)+a*(p[(1)*M+M-3]-2*p[(1)*M+M-2]+p[(1)*M+M-1])/(2*h*h)+p[(1)*(M)+M-2]*(1/t-(1+(1-h)*(1-h)));
 
     for(int i=1; i<M-3; i++)
     {
-        A[(M-2)*i+i-1]=-a/(2*h*h);
-        A[(M-2)*i+i]=1/t+a/(h*h)+(1+(h*(i+1)-1)*(h*(i+1)-1))/2;
-        A[(M-2)*i+i+1]=-a/(2*h*h);
-        B[i]=p[(j+1)*(M)+1+i]*(1/t-(1+(h*(i+1)-1)*(h*(i+1)-1))/2)+a*(p[(j+1)*M+i]-2*p[(j+1)*M+1+i]+p[(j+1)*M+2+i])/(2*h*h);
+        A[3*i+2]=-a/(2*h*h);
+        A[3*i]=1/t+a/(h*h)+(1+(h*(i+1)-1)*(h*(i+1)-1))/2;
+        A[3*i+1]=-a/(2*h*h);
+        B[i]=p[(1)*(M)+1+i]*(1/t-(1+(h*(i+1)-1)*(h*(i+1)-1))/2)+a*(p[(1)*M+i]-2*p[(1)*M+1+i]+p[(1)*M+2+i])/(2*h*h);
     }
     return;
 }
@@ -246,33 +254,3 @@ void makeDt(double *Dt, double *p, double t,int nn, int M)
     }
     return;
 }
-
-
-//int MAIN()
-//{
-//    double *a,*b;
-//    double *x;
-//    a=(double*)malloc(3*3*sizeof (double));
-//    b=(double*)malloc(3*sizeof (double));
-//    x=(double*)malloc(3*sizeof (double));
-//
-//    for(int i=0;i<3;i++)
-//    {
-//        a[i*3]=1;
-//        a[i*3+1]=0;
-//        a[i*3+2]=0;
-//        b[i]=1;
-//    }
-//    for(int i=0;i<9;i++)
-//    {
-//        printf("%.3f  ",a[i]);
-//    }
-//    printf("\n");
-//    RESHI(a,x,b,3);
-//    for(int i=0;i<3;i++)
-//    {
-//        printf("%.3f  ",x[i]);
-//    }
-//    printf("\n");
-//    return 0;
-//}
