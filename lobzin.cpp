@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 void RESHI(double *a, double *x, double *b,int N);
-int Max(double *p, int nn, int M, int T, double eps);
-int Min(double *p,int w, int nn, int M, int T, double eps);
-void makeAandB(double *p,double *A, double *B, double t, double h,double a, double b, int nn, int M, int T, double eps);
-void makeDx(double *Dx, double *p, double h, int nn, int M, int T, double eps);
-void makeDt(double *Dt,double *p,double t, int nn, int M, int T, double eps);
+int Max(double *p, int nn, int M);
+int Min(double *p,int w, int nn, int M);
+void makeAandB(double *p,double *A, double *B, double t, double h,double a, double b, int nn, int M);
+void makeDx(double *Dx, double *p, double h, int nn, int M);
+void makeDt(double *Dt,double *p,double t, int nn, int M);
 
 
 double
@@ -21,7 +21,7 @@ lambda (double x)
 double
 diff (double a, double b, double p[], int nn, int M, int T, double eps)
 {
-    int i, j, k, *c, L, MAX, MIN, num = 0, minDx, maxDx, minDt, maxDt;
+    int L, MAX, MIN, num = 0, minDx, maxDx, minDt, maxDt;
     double x = 0, s, *Dx, *Dt;
     double t, n1, M1, h;
     n1 = nn;
@@ -41,14 +41,14 @@ diff (double a, double b, double p[], int nn, int M, int T, double eps)
         double *A = new double[(M-2)*(M-2)];
         double *B = new double[M-2];
         double *X = new double[M-2];
-        for (i = 0; i < (M - 2) * (M - 2); i++)
+        for (int i = 0; i < (M - 2) * (M - 2); i++)
         {
             A[i] = 0;
         }
-        makeAandB (p, A, B, t, h, a, b, nn,M,T,eps);
+        makeAandB (p, A, B, t, h, a, b, nn,M);
         RESHI (A, X, B, M - 2);
         L = 0;
-        for (i = 1; i <= M - 2; i++)
+        for (int i = 1; i <= M - 2; i++)
         {
             p[i] = X[i - 1];
             if (fabs (p[ i] - p[(1) * M + i]) < eps){L++;}
@@ -56,7 +56,7 @@ diff (double a, double b, double p[], int nn, int M, int T, double eps)
         }
         p[0] = (-p[1]/h+(h*p[(1)*M])/(2*a*t)+(h)/(2*a)-1)/((-1/h-(h)/(2*a*t))) ;
         p[M - 1] =(p[M - 2]/h+(h*p[(1)*M+M-1])/(2*a*t)-(h)/(2*a))/(1/h+(h)/(2*a*t)+h/(2*a));
-        for (i = 0; i <= M - 1; i++){
+        for (int i = 0; i <= M - 1; i++){
 
             //printf("%.8f   ", p[i+M]);
             p[i+M]=p[i];
@@ -85,13 +85,13 @@ diff (double a, double b, double p[], int nn, int M, int T, double eps)
 
 int main ()
 {
-    int i=0, nn=10,M=10,nn1=10,M1=10,nn2=10,M2=10,T=1, u, minDt1, minDt2, minDt3;
-    double  b = 0.1, a = 0.01, eps=0.00000001, *Dt,*Dt1,*Dt2,t1,n1,n2,t,n3,t2;
+    int nn=10,M=10,T=1;
+    double  b = 0.1, a = 0.01, eps=0.00000001;
     for(int j=0; j<1;j++){
         M = 100*(j+1);
         nn=M*M*3;
         double *p = new double[2*M-1];
-        for(i=0;i<nn*M;i++){p[i]=100;}
+        for(int i=0;i<nn*M;i++){p[i]=100;}
         diff(a,b,p,nn,M,T,eps);
         /*                   Dt = (double *) malloc (M * nn * sizeof (double));
           if (Dt == NULL)
@@ -103,8 +103,8 @@ int main ()
        {
          Dt[i] = 100;
        }
-       makeDt (Dt, p, t,nn,M,T,eps);
-       minDt1=Min(Dt,0,nn,M,T,eps);
+       makeDt (Dt, p, t,nn,M);
+       minDt1=Min(Dt,0,nn,M);
        printf ( "0.1 & %.8f & %.8f  & %.8f & %.8f & %.8f", p[M*(nn/10)],p[M*(nn/10)+M/4],p[M*(nn/10)+M/2],p[M*(nn/10)+3*M/4],p[M*(nn/10)+M-1]) ;
        printf("\\\\");
        printf("\n");
@@ -134,8 +134,8 @@ int main ()
         {
           Dt[i] = 100;
         }
-        makeDt (Dt, p, t,nn,M,T,eps);
-        minDt1=Min(Dt,0,nn,M,T,eps);
+        makeDt (Dt, p, t,nn,M);
+        minDt1=Min(Dt,0,nn,M);
 
 
 
@@ -157,8 +157,8 @@ int main ()
         {
           Dt1[i] = 100;
         }
-            makeDt (Dt1, p1, t1,nn1,M1,T,eps);
-            minDt2=Min(Dt1,0,nn1,M1,T,eps);
+            makeDt (Dt1, p1, t1,nn1,M1);
+            minDt2=Min(Dt1,0,nn1,M1);
 
 
 
@@ -179,8 +179,8 @@ int main ()
         {
           Dt2[i] = 100;
         }
-            makeDt (Dt2, p2, t2,nn2,M2,T,eps);
-            minDt3=Min(Dt2,0,nn2,M2,T,eps);
+            makeDt (Dt2, p2, t2,nn2,M2);
+            minDt3=Min(Dt2,0,nn2,M2);
         printf ( "0.1 & %.8f & %.8f  & %.8f & %.8f & %.8f",(p[M*(nn/10)]-p1[M1*(nn1/10)]),(p[M*(nn/10)+M/4]-p1[M1*(nn1/10)+M1/4]),(p[M*(nn/10)+M/2]-p1[M1*(nn1/10)+M1/2]),(p[M*(nn/10)+3*M/4]-p1[M1*(nn1/10)+3*M1/4]),(p[M*(nn/10)+M-1]-p1[M1*(nn1/10)+M1-1])) ;
         printf("\\\\");
         printf("\n");
@@ -206,7 +206,7 @@ int main ()
 
 
 
-int Max(double *p,int nn, int M,int T, double eps)
+int Max(double *p,int nn, int M)
 {
     double s=0.0;
     int i,k;
@@ -216,7 +216,7 @@ int Max(double *p,int nn, int M,int T, double eps)
     }
     return k;
 }
-int Min(double *p,int w, int nn, int M,int T, double eps)
+int Min(double *p,int w, int nn, int M)
 {
     double s=2.0;
     int i,k;
@@ -251,10 +251,8 @@ void RESHI(double *a, double *x, double *b,int N)
     return;
 }
 void makeAandB (double *p, double *A, double *B, double t, double h, double a,
-           double b, int nn, int M,int T, double eps)
+           double b, int nn, int M)
 {
-    int q1 = 0;
-    int i;
     A[0] = 1/t+a/(h*h)+(h*h)/2-a/(2*h*h*h*(1/h+h/(2*a*t)));
     A[1] = -a/(2*h*h);
     A[(M-2)*(M-2)-2]=-a/(2*h*h);
@@ -296,7 +294,7 @@ printf ("%.8f   ", A[i]);
 }
 
 
-void makeDx(double *Dx, double *p, double h,int nn, int M,int T, double eps)
+void makeDx(double *Dx, double *p, double h,int nn, int M)
 {
     int i,j;
     for(j=0;j<nn-1;j++)
@@ -308,7 +306,7 @@ void makeDx(double *Dx, double *p, double h,int nn, int M,int T, double eps)
     }
     return;
 }
-void makeDt(double *Dt, double *p, double t,int nn, int M,int T, double eps)
+void makeDt(double *Dt, double *p, double t,int nn, int M)
 {
     int i,j;
     for(j=1;j<nn-1;j++)

@@ -210,7 +210,6 @@ void RESHI(double *a, double *x, double *b,int N)
 }
 void makeAandB(double *p,double *A, double *B, double t, double h,double a, int j, int M)
 {
-//    int i,q1=0;
     A[0] = 1/t+a/(h*h)+(h*h)/2-a/(2*h*h*h*(1/h+h/(2*a*t)));
     A[1] = -a/(2*h*h);
     A[(M-2)*(M-2)-2]=-a/(2*h*h);
@@ -253,12 +252,6 @@ void makeDt(double *Dt, double *p, double t,int nn, int M)
         }
     }
     return;
-}
-void PRINT(double *p,double t,double h, double s,int x, int y,int z,int c,int u,int g,int nn, int M, int T, double eps)
-{
-    printf("\n");
-    printf("\n");
-
 }
 
 
