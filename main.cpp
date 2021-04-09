@@ -13,7 +13,7 @@ void makeDt(double *Dt,double *p,double t,int nn, int M);
 
 double diff(double a, double b, double p[],int nn, int M, int T, double eps,double *Dt)
 {
-    int i,j,k,*c,L,MAX,MIN,num=0,minDx,maxDx,minDt,maxDt;
+    int L,MAX,MIN,num=0,minDx,maxDx,minDt,maxDt;
     double x=0,s,*Dx;
     double t, n1, M1, h;
     n1=nn;
@@ -24,17 +24,18 @@ double diff(double a, double b, double p[],int nn, int M, int T, double eps,doub
 
     for(int j=nn-2; j>=0; j--)
     {
-        double *A = new double[(M-2)*(M-2)];
-        double *B = new double[M-2];
-        double *X = new double[M-2];
+        double *A,*B,*X;
+        B = (double *) malloc ((M - 2) * sizeof (double));
+        X = (double *) malloc ((M - 2) * sizeof (double));
+        A = (double *) malloc ((M - 2) * (M - 2) * sizeof (double));
 
-        for(i=0;i<(M-2)*(M-2);i++){A[i]=0;}
-        for(i=0;i<M*nn;i++){Dt[i]=100;}
+        for(int i=0;i<(M-2)*(M-2);i++){A[i]=0;}
+        for(int i=0;i<M*nn;i++){Dt[i]=100;}
 
         makeAandB(p,A,B,t,h,a,j,M);
         RESHI(A,X,B,M-2);
         L=0;
-        for(i=1;i<=M-2;i++)
+        for(int i=1;i<=M-2;i++)
         {
             p[j*M+i]=X[i-1];
             if(fabs(p[j*M+i]-p[(j+1)*M+i])<eps){L++;}
@@ -42,8 +43,8 @@ double diff(double a, double b, double p[],int nn, int M, int T, double eps,doub
         p[j*M]=1;
         p[j*M+M-1] = 1;
         if(L==M-2){s=(nn-j)*t;num=j;j=-1;}
-        makeDx(Dx,p,h,nn,M);
-//        makeDt(Dt,p,t,nn,M);
+//        makeDx(Dx,p,h,nn,M);
+        makeDt(Dt,p,t,nn,M);
     }
     /*for(int i=0; i<=nn*M-1; i++)
     {
@@ -71,13 +72,13 @@ double diff(double a, double b, double p[],int nn, int M, int T, double eps,doub
 //    minDt=Min(Dt,0,nn,M);
 //    maxDt=Max(Dt,nn,M);
 //    PRINT(p,t,h,s,MIN,MAX,minDx,maxDx,minDt,maxDt,nn,M,T,eps);
-return 0;
+    return 0;
 }
 
 
 int main ()
 {
-    int i=0, nn=10,M=10,nn1=10,M1=10,nn2=10,M2=10,T=1, u, minDt1, minDt2, minDt3;
+    int  nn=10,M=10,nn1=10,M1=10,nn2=10,M2=10,T=1, u, minDt1, minDt2, minDt3;
     double  b = 0.1, a = 0.01, eps=0.00000001, *Dt,*Dt1,*Dt2,t1,n1,n2,t,n3,t2;
     for(int j=0; j<2;j++) {
 
@@ -86,9 +87,8 @@ int main ()
         n1 = nn;
         t = T / (n1 - 1);
         double p[nn * M - 1];
-        for (i = 0; i < nn * M; i++) { p[i] = 100; }
+        for (int i = 0; i < nn * M; i++) { p[i] = 100; }
         Dt=(double*)malloc(M*nn*sizeof(double));
-        if(Dt==NULL){printf("6\n");return -1;}
         diff(a, b, p, nn, M, T, eps,Dt);
         minDt1 = Min(Dt, 0, nn, M);
 
@@ -97,9 +97,8 @@ int main ()
         n2 = nn1;
         t1 = T / (n2 - 1);
         double p1[nn1 * M1 - 1];
-        for (i = 0; i < nn1 * M1; i++) { p1[i] = 100; }
+        for (int i = 0; i < nn1 * M1; i++) { p1[i] = 100; }
         Dt1=(double*)malloc(M1*nn1*sizeof(double));
-        if(Dt1==NULL){printf("61\n");return -1;}
         diff(a, b, p1, nn1, M1, T, eps,Dt1);
         minDt2 = Min(Dt1, 0, nn1, M1);
 
@@ -108,9 +107,8 @@ int main ()
         n3 = nn2;
         t2 = T / (n3 - 1);
         double p2[nn2 * M2 - 1];
-        for (i = 0; i < nn2 * M2; i++) { p2[i] = 100; }
+        for (int i = 0; i < nn2 * M2; i++) { p2[i] = 100; }
         Dt2=(double*)malloc(M2*nn2*sizeof(double));
-        if(Dt2==NULL){printf("62\n");return -1;}
         diff(a, b, p2, nn2, M2, T, eps,Dt2);
         minDt3 = Min(Dt2, 0, nn2, M2);
 
@@ -186,10 +184,10 @@ int Min(double *p,int w,int nn, int M)
 
 void RESHI(double *a, double *x, double *b,int N)
 {
-    double *s = new double[N];
-    double *p = new double[N];
-    double *y = new double[N];
-
+    double *s,*p,*y;
+    s = (double *) malloc (N * sizeof (double));
+    p = (double *) malloc (N* sizeof (double));
+    y = (double *) malloc (N* sizeof (double));
     y[0]=a[0];
     s[0]=-a[1]/y[0];
     p[0]=b[0]/y[0];
