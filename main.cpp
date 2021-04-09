@@ -9,8 +9,6 @@ void makeAandB(double *p,double *A, double *B, double t, double h,double a,int j
 
 double diff (double a, double b, double p[], int nn, int M, int T,double strMax[],int numMax,double str01[],double str09[],double s)
 {
-    int MAX,MIN,num=0,minDx,maxDx,minDt,maxDt;
-    double x=0,*Dx;
     double t, n1, M1, h;
     n1=nn;
     M1=M;
@@ -85,8 +83,8 @@ double diff (double a, double b, double p[], int nn, int M, int T,double strMax[
 int main ()
 {
     int nn=10,M=10,T=1,numMax,M1,nn1, numMax1, nn2, numMax2, M2;
-    double  s=0,b = 0.1, a = 1,strMax[5],str01[5],str09[5],strMax1[5],str011[5],str091[5],n2,t2,str012[5],str092[5],n3,t3,strMax2[5];
-    for(int j=0; j<3;j++){
+    double  s=0,b = 0.1, a = 0.01,strMax[5],str01[5],str09[5],strMax1[5],str011[5],str091[5],n2,t2,str012[5],str092[5],n3,t3,strMax2[5];
+    for(int j=0; j<1;j++){
         M = 50*(j+1);
         nn=M*M*3;
         double *p,*p1,*p2;
