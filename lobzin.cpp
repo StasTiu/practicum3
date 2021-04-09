@@ -4,8 +4,7 @@
 void RESHI(double *a, double *x, double *b,int N);
 int Max(double *p, int nn, int M);
 int Min(double *p,int w, int nn, int M);
-void makeAandB(double *p,double *A, double *B, double t, double h,double a, double b, int nn, int M);
-void makeDt(double *Dt,double *p,double t, int nn, int M);
+void makeAandB(double *p,double *A, double *B, double t, double h,double a,int M);
 
 
 double
@@ -20,8 +19,6 @@ lambda (double x)
 double
 diff (double a, double b, double p[], int nn, int M, int T,double strMax[],int numMax,double str01[],double str09[],double s)
 {
-    int  MAX, MIN, num = 0, minDx, maxDx, minDt, maxDt;
-    double x = 0, *Dx, *Dt;
     double t, n1, M1, h;
     n1 = nn;
     M1 = M;
@@ -32,9 +29,6 @@ diff (double a, double b, double p[], int nn, int M, int T,double strMax[],int n
         p[i] = lambda ((i-M)* h);
     }
 
-
-
-
     for (int j = nn - 2; j >= 0; j--)
     {
         double *A,*B,*X;
@@ -42,7 +36,7 @@ diff (double a, double b, double p[], int nn, int M, int T,double strMax[],int n
         X = (double *) malloc ((M - 2) * sizeof (double));
         A = (double *) malloc ((M - 2) * 3 * sizeof (double));
 
-        makeAandB (p, A, B, t, h, a, b, nn,M);
+        makeAandB (p, A, B, t, h, a,M);
         RESHI (A, X, B, M - 2);
 
         for (int i = 1; i <= M - 2; i++)
@@ -232,8 +226,7 @@ void RESHI(double *a, double *x, double *b,int N)
     }
     return;
 }
-void makeAandB (double *p, double *A, double *B, double t, double h, double a,
-                double b, int nn, int M)
+void makeAandB (double *p, double *A, double *B, double t, double h, double a, int M)
 {
     int q1=0;
     A[0] = 1/t+a/(h*h)+(h*h)/2-a/(2*h*h*h*(1/h+h/(2*a*t)));
@@ -272,21 +265,5 @@ printf ("%.8f   ", A[i]);
 //printf ("\n");
 //printf ("\n");
 //printf ("\n");*/
-    return;
-}
-
-
-
-
-void makeDt(double *Dt, double *p, double t,int nn, int M)
-{
-    int i,j;
-    for(j=1;j<nn-1;j++)
-    {
-        for(i=j*M;i<(j+1)*M;i++)
-        {
-            Dt[i]=(p[i+M]-p[i-M])/2/t;
-        }
-    }
     return;
 }
